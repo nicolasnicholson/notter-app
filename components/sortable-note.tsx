@@ -8,16 +8,10 @@ import { Card } from './ui/card';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/lib/store';
 
+import type { Note } from '@/lib/store';
+
 interface SortableNoteProps {
-  note: {
-    id: string;
-    title: string;
-    content: string;
-    updated_at: string;
-    tags: { id: string; name: string; }[];
-    is_archived: boolean;
-    is_favorite: boolean;
-  };
+  note: Note;
 }
 
 export function SortableNote({ note }: SortableNoteProps) {
