@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { supabase } from './supabase';
 
-interface Note {
+export interface Note {
   id: string;
   title: string;
   content: string;
