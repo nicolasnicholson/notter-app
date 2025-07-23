@@ -56,7 +56,7 @@ export function NotesList() {
   };
 
   return (
-    <ScrollArea className="h-[calc(100vh-16rem)] rounded-lg border bg-card p-4">
+    <ScrollArea className="h-[calc(100vh-20rem)] lg:h-[calc(100vh-16rem)] rounded-lg border bg-card p-4">
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -70,6 +70,11 @@ export function NotesList() {
             {filteredNotes.map((note) => (
               <SortableNote key={note.id} note={note} />
             ))}
+            {filteredNotes.length === 0 && (
+              <div className="text-center text-muted-foreground py-8">
+                <p className="text-sm">No notes found</p>
+              </div>
+            )}
           </div>
         </SortableContext>
       </DndContext>

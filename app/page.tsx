@@ -8,7 +8,7 @@ import { SearchBar } from '@/components/search-bar';
 import { TagSelector } from '@/components/tag-selector';
 import { NoteFilters } from '@/components/note-filters';
 import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Menu, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ThemeSwitcher } from '@/components/theme-switcher';
 import { LanguageSwitcher } from '@/components/language-switcher';
@@ -17,7 +17,8 @@ import { supabase } from '@/lib/supabase';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
-  const { notes, syncWithSupabase, syncOfflineChanges, addNote } = useStore();
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const { notes, syncWithSupabase, syncOfflineChanges, addNote, selectedNote } = useStore();
   const { toast } = useToast();
   const { t } = useTranslation();
 
@@ -74,6 +75,7 @@ export default function Home() {
     
     try {
       await addNote(newNote);
+      setIsMobileSidebarOpen(false); // Close sidebar on mobile after creating note
       toast({
         title: "Note created",
         description: "Your note has been created successfully.",
@@ -101,7 +103,30 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
+        {/* Mobile Header */}
+        <div className="flex items-center justify-between mb-8 lg:hidden">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+            >
+              {isMobileSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </Button>
+            <h1 className="text-2xl font-bold text-foreground">{t('app.title')}</h1>
+          </div>
+          <div className="flex items-center gap-2">
+            <ThemeSwitcher />
+            <LanguageSwitcher />
+            <Button onClick={handleCreateNote} className="gap-2">
+              <PlusCircle className="w-5 h-5" />
+              <span className="hidden sm:inline">{t('note.new')}</span>
+            </Button>
+          </div>
+        </div>
+        
+        {/* Desktop Header */}
+        <div className="hidden lg:flex items-center justify-between mb-8">
           <h1 className="text-4xl font-bold text-foreground">{t('app.title')}</h1>
           <div className="flex items-center gap-4">
             <ThemeSwitcher />
@@ -113,15 +138,46 @@ export default function Home() {
           </div>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-4 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative">
+          {/* Mobile Sidebar Overlay */}
+          {isMobileSidebarOpen && (
+            <div 
+              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+              onClick={() => setIsMobileSidebarOpen(false)}
+            />
+          )}
+          
+          {/* Sidebar */}
+          <div className={`
+            lg:col-span-4 space-y-6
+            lg:relative lg:translate-x-0 lg:z-auto
+            fixed top-0 left-0 h-full w-80 bg-background z-50 p-4 pt-20
+            transform transition-transform duration-300 ease-in-out
+            ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+            lg:p-0 lg:pt-0 lg:w-auto lg:h-auto
+          `}>
             <SearchBar />
             <TagSelector />
             <NoteFilters />
             <NotesList />
           </div>
           
+          {/* Main Content */}
           <div className="lg:col-span-8">
+            {/* Mobile: Show message when no note selected */}
+            {!selectedNote && (
+              <div className="lg:hidden text-center text-muted-foreground py-8">
+                <p>{t('note.select')}</p>
+                <Button 
+                  onClick={() => setIsMobileSidebarOpen(true)}
+                  variant="outline"
+                  className="mt-4"
+                >
+                  <Menu className="w-4 h-4 mr-2" />
+                  Open Notes
+                </Button>
+              </div>
+            )}
             <NoteEditor />
           </div>
         </div>

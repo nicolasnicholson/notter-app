@@ -110,16 +110,16 @@ export function NoteEditor() {
   }
 
   return (
-    <Card className="h-[calc(100vh-16rem)] flex flex-col p-4">
+    <Card className="h-[calc(100vh-16rem)] lg:h-[calc(100vh-16rem)] flex flex-col p-4">
       <div className="flex items-center gap-4 mb-4">
         <Input
           value={localTitle}
           onChange={handleTitleChange}
           placeholder={t('note.title')}
-          className="text-lg font-medium"
+          className="text-lg font-medium flex-1"
         />
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           <Button
             variant="outline"
             size="icon"
@@ -147,6 +147,7 @@ export function NoteEditor() {
           </Button>
           
           <Button
+            className="hidden sm:flex"
             variant="outline"
             size="icon"
             onClick={handleExportPDF}
@@ -171,7 +172,7 @@ export function NoteEditor() {
       />
 
       {isPreview ? (
-        <div className="flex-1 overflow-auto prose prose-sm dark:prose-invert max-w-none p-4">
+        <div className="flex-1 overflow-auto prose prose-sm dark:prose-invert max-w-none p-2 sm:p-4">
           <ReactMarkdown>{localContent}</ReactMarkdown>
         </div>
       ) : (
@@ -179,7 +180,7 @@ export function NoteEditor() {
           value={localContent}
           onChange={handleContentChange}
           placeholder={t('note.content')}
-          className="flex-1 resize-none"
+          className="flex-1 resize-none text-sm sm:text-base"
         />
       )}
     </Card>

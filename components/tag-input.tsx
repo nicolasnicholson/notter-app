@@ -38,12 +38,12 @@ export function TagInput({ value, onChange, className }: TagInputProps) {
 
   return (
     <div className={cn("space-y-2", className)}>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1 sm:gap-2">
         {value.map((tag) => (
-          <Badge key={tag.id} variant="secondary" className="gap-1">
+          <Badge key={tag.id} variant="secondary" className="gap-1 text-xs">
             {tag.name}
             <X
-              className="h-3 w-3 cursor-pointer hover:text-destructive"
+              className="h-3 w-3 cursor-pointer hover:text-destructive touch-none"
               onClick={() => removeTag(tag.id)}
             />
           </Badge>
@@ -55,6 +55,7 @@ export function TagInput({ value, onChange, className }: TagInputProps) {
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Add tags... (Press Enter)"
+        className="text-sm"
       />
     </div>
   );

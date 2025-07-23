@@ -8,10 +8,16 @@ import { Card } from './ui/card';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/lib/store';
 
-import type { Note } from '@/lib/store';
-
 interface SortableNoteProps {
-  note: Note;
+  note: {
+    id: string;
+    title: string;
+    content: string;
+    updated_at: string;
+    tags: { id: string; name: string; }[];
+    is_archived: boolean;
+    is_favorite: boolean;
+  };
 }
 
 export function SortableNote({ note }: SortableNoteProps) {
@@ -36,7 +42,7 @@ export function SortableNote({ note }: SortableNoteProps) {
       ref={setNodeRef}
       style={style}
       className={cn(
-        "p-4 cursor-pointer transition-colors hover:bg-accent",
+        "p-3 sm:p-4 cursor-pointer transition-colors hover:bg-accent",
         isDragging && "opacity-50",
         selectedNote?.id === note.id && "bg-accent"
       )}
@@ -46,14 +52,14 @@ export function SortableNote({ note }: SortableNoteProps) {
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab hover:text-primary"
+          className="cursor-grab hover:text-primary touch-none"
         >
           <GripVertical className="h-5 w-5" />
         </div>
         
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="font-medium truncate flex-1">{note.title}</h3>
+            <h3 className="font-medium truncate flex-1 text-sm sm:text-base">{note.title}</h3>
             <div className="flex gap-1">
               {note.is_favorite && (
                 <Heart className="h-4 w-4 text-red-500" fill="currentColor" />
@@ -64,18 +70,21 @@ export function SortableNote({ note }: SortableNoteProps) {
             </div>
           </div>
           
-          <p className="text-sm text-muted-foreground truncate">{note.content}</p>
+          <p className="text-xs sm:text-sm text-muted-foreground truncate">{note.content}</p>
           
           <div className="mt-2 flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-muted-foreground hidden sm:inline">
               {format(new Date(note.updated_at), 'MMM d, yyyy')}
             </span>
+            <span className="text-xs text-muted-foreground sm:hidden">
+              {format(new Date(note.updated_at), 'MMM d')}
+            </span>
             
-            <div className="flex gap-1">
+            <div className="flex gap-1 flex-wrap">
               {note.tags.map((tag) => (
                 <span
                   key={tag.id}
-                  className="px-2 py-0.5 rounded-full bg-secondary text-xs"
+                  className="px-1.5 py-0.5 rounded-full bg-secondary text-xs max-w-20 truncate"
                 >
                   {tag.name}
                 </span>
